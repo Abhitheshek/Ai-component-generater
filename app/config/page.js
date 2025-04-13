@@ -32,8 +32,13 @@ generationConfig: {
 
 
 const GeminiResponse = async (prompt) => {
-  const result = await model.generateContent(prompt);
-  return result.response.text();
+  try {
+    const result = await model.generateContent(prompt);
+    return result.response.text();
+  } catch (error) {
+    console.error("Error generating content:", error);
+    throw new Error("Failed to generate content");
+  }
 };
 
 export default  GeminiResponse;
