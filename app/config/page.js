@@ -34,6 +34,12 @@ generationConfig: {
 const GeminiResponse = async (prompt) => {
   try {
     const result = await model.generateContent(prompt);
+    
+    // Check if result.response and result.response.text are defined
+    if (!result || !result.response || typeof result.response.text !== 'function') {
+      throw new Error("Invalid response format");
+    }
+
     return result.response.text();
   } catch (error) {
     console.error("Error generating content:", error);
