@@ -1,3 +1,5 @@
+
+
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY);
@@ -31,22 +33,23 @@ generationConfig: {
 
 
 
-const GeminiResponse = async (prompt) => {
+ const GeminiResponse = async (prompt) => {
   try {
     const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
     
-    // Check if result.response and result.response.text are defined
-    if (!result || !result.response || typeof result.response.text !== 'function') {
-      throw new Error("Invalid response format");
+    if (!text) {
+      throw new Error("Empty response from API");
     }
 
-    return result.response.text();
+    return text;
   } catch (error) {
     console.error("Error generating content:", error);
-    throw new Error("Failed to generate content");
+    throw error; // Propagate the error with more details
   }
 };
 
-export default  GeminiResponse;
+export default GeminiResponse;
 
 
