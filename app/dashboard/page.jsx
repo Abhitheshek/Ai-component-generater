@@ -4,7 +4,7 @@
 
 import React, { useState } from 'react';
 import Editor  from 'react-simple-code-editor'
-import GeminiResponse from "../config/page";
+import GeminiResponse from "../lib/GeminiResponse";
 import Markdown from 'react-markdown'
 import rehypeHighlight from "rehype-highlight"
 import "highlight.js/styles/github-dark.css"

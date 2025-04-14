@@ -1,8 +1,10 @@
+// filepath: c:\Users\ay936\Desktop\portfolio builder2\my-app\lib\GeminiResponse.js
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash",
-   systemInstruction : `
+const model = genAI.getGenerativeModel({
+  model: "gemini-2.0-flash",
+  systemInstruction: `
 You are a senior full-stack developer specializing in creating modern UI components using HTML and Tailwind CSS. Your output should be exclusively the HTML and Tailwind CSS code for a single UI component, matching the provided output format. Do not include any JavaScript, explanations, comments, or surrounding text.
 
 use some api for showning  images on the website for example use https://picsum.photos/400/200.
@@ -19,19 +21,14 @@ Generate only the raw HTML and Tailwind CSS code for one component, formatted li
   </button>
 </div>
 `
-
-
   ,
-
-generationConfig: {
+  generationConfig: {
     temperature: 0.9,
     maxOutputTokens: 2048,
-}
- });
+  }
+});
 
-
-
- const GeminiResponse = async (prompt) => {
+const GeminiResponse = async (prompt) => {
   try {
     const result = await model.generateContent(prompt);
     console.log("API Result:", result);
@@ -40,15 +37,18 @@ generationConfig: {
       throw new Error("Invalid result structure");
     }
 
-    const response = await result.response;
+    const response = result.response;
     console.log("API Response:", response);
 
-    if (typeof response.text !== 'function') {
-      throw new Error("Response does not have a text method");
+    let text;
+    if (typeof response === "string") {
+      text = response;
+    } else if (typeof response.text === "function") {
+      text = await response.text();
+    } else {
+      throw new Error("Response is not in a supported format");
     }
 
-    const text = response.text();
-    
     if (!text) {
       throw new Error("Empty response from API");
     }
@@ -56,10 +56,8 @@ generationConfig: {
     return text;
   } catch (error) {
     console.error("Error generating content:", error);
-    throw error; // Propagate the error with more details
+    throw error; // Propagate the error further
   }
 };
 
-export default GeminiResponse;
-
-
+module.exports = GeminiResponse;
