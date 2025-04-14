@@ -35,8 +35,18 @@ generationConfig: {
   try {
     const result = await model.generateContent(prompt);
     console.log("API Result:", result);
+
+    if (!result || !result.response) {
+      throw new Error("Invalid result structure");
+    }
+
     const response = await result.response;
     console.log("API Response:", response);
+
+    if (typeof response.text !== 'function') {
+      throw new Error("Response does not have a text method");
+    }
+
     const text = response.text();
     
     if (!text) {
